@@ -9,8 +9,17 @@ const client = await clientPromise;
   const db = client.db("elearning");
   switch (req.method) {
     case "GET":
-      const kursus = await db.collection("kursus").find({}).toArray();
-      res.json({ status: 200, data: kursus });
+      const filter = req.query.filter || '';
+      const options = {
+        projection:{
+          content: 0
+        }
+      }
+      const kursus = await db.collection("kursus").find({
+        title:{$regex: filter, $options: 'i'},
+      },options).toArray();
+
+      res.json({status: 200, data:kursus});
       break;
   }
 }
